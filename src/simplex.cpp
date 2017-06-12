@@ -82,21 +82,25 @@ void Simplex::load(string file){
     }
 }
 
-vector<double> Simplex::reducedCosts(vector<double> lambda, vector<double> &r, int &iminr){
+void Simplex::reducedCosts(vector<double> lambda, vector<double> &r, int &iminr){
     int i, j, k, l;
     double dot, min = numeric_limits<double>::infinity();
 
     for(i = 0, k = 0, l = 0; i < n; i++){
+        //Verifica se a variavel esa na base.
         for(l = 0; l < Ib.size(); l++){
             if(Ib[l] == i){
                 break;
             }
         }
+        //Caso nao esteja, o custo reduzido da variavel nao basica eh computado.
         if(l == Ib.size()){
+            //Produto interno de lambda*aj, onde aj sao as constantes da var. nao basica.
             for(j = 0, dot = 0.0; j < m; j++){
                 dot += lambda[j] * A[j][i];
             }
             r[k] = c[i] - dot;
+            //Verifica se eh menor que o menor custo reduzido ate o momento.
             if(r[k] < min){
                 min = r[k];
                 iminr = i;
@@ -105,9 +109,8 @@ vector<double> Simplex::reducedCosts(vector<double> lambda, vector<double> &r, i
         }
     }
 
+    //Se o menor custo reduzido eh positivo, entao ri > 0, para i = 1,...,m e a solucao eh otima.
     if(min >= 0) iminr = -1;
-
-    return r;
 }
 
 vector<double> Simplex::solve(){

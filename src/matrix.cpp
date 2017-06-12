@@ -16,34 +16,6 @@ vector<string> split_line(string str){
     return vstrings;
 }
 
-void load_matrix(string file, dMatrix &A, vector<double> &b){
-    ifstream input(file);
-    string line;
-    vector<string> vals;
-    int n, i, j;
-
-    getline(input, line);
-    n = stoi(line);
-
-    b.resize(n);
-    A.resize(n);
-    for(i = 0; i < n; i++){
-        A[i].resize(n);
-    }
-
-    for(i = 0; getline(input, line) && i < n; i++){
-        vals = split_line(line);
-        for(j = 0; j < n; j++){
-            A[i][j] = stod(vals[j]);
-        }
-    }
-
-    vals = split_line(line);
-    for(j = 0; j < n; j++){
-        b[j] = stod(vals[j]);
-    }
-}
-
 void print_matrix(dMatrix A, vector<uint> p){
     int i, j, n, m;
 
@@ -113,17 +85,6 @@ void print_vector(vector<T> v){
         cout << v[i] << ", ";
     }
     cout << v[i] << "]" << endl;
-}
-
-double dot(std::vector<double> a, std::vector<double> b){
-    int i, dim = a.size();
-    double sum;
-
-    for(i = 0, sum = 0.0; i < dim; i++){
-        sum += a[i] * b[i];
-    }
-
-    return sum;
 }
 
 double stodn(string str){
