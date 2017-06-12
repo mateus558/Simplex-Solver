@@ -1,0 +1,1 @@
+/usr/bin/g++   -g   CMakeFiles/Project.dir/src/lu_decomp.cpp.o CMakeFiles/Project.dir/src/main.cpp.o CMakeFiles/Project.dir/src/matrix.cpp.o CMakeFiles/Project.dir/src/simplex.cpp.o  -o Project -rdynamic 

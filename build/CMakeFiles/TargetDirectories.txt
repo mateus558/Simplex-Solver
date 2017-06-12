@@ -1,0 +1,3 @@
+/home/mateus558/Dropbox/Materiais/Computação/Simplex_solver/build/CMakeFiles/edit_cache.dir
+/home/mateus558/Dropbox/Materiais/Computação/Simplex_solver/build/CMakeFiles/rebuild_cache.dir
+/home/mateus558/Dropbox/Materiais/Computação/Simplex_solver/build/CMakeFiles/Project.dir
