@@ -9,8 +9,10 @@ int main(int argc, char *argv[])
     Simplex solver(argv[1]);
     vector<double> x;
     int i;
+
     cout << fixed;
     cout << setprecision(3);
+
     x = solver.solve();
     if(x.size() > 0){
         cout << "Solucao x =" << endl;
@@ -20,5 +22,6 @@ int main(int argc, char *argv[])
         }
         cout << endl;
     }
+
     return 0;
 }

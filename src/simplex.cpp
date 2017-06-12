@@ -4,20 +4,14 @@
 #include <fstream>
 #include <limits>
 #include <numeric>
+#include <cmath>
 
 #include "../includes/lu_decomp.hpp"
 #include "../includes/simplex.hpp"
 
+#define EPS 1E-9
+
 using namespace std;
-
-bool is_number(const char* str){
-    char* endptr = 0;
-    strtod(str, &endptr);
-
-    if(*endptr != '\0' || endptr == str)
-        return false;
-    return true;
-}
 
 Simplex::Simplex(const char* file, std::vector<uint> Ib)
 {
@@ -27,9 +21,12 @@ Simplex::Simplex(const char* file, std::vector<uint> Ib)
         load(f);
     }
 
+    //Caso os indices das colunas da base nao sejam passadas, as m ultimas colunas de A sao usadas
     if(Ib.size() == 0){
         this->Ib.resize(m);
+        this->Nb.resize(n-m);
         iota(this->Ib.begin(), this->Ib.end(), n-m);
+        iota(this->Nb.begin(), this->Nb.end(), 0);
     }else{
         this->Ib = Ib;
     }
@@ -43,7 +40,7 @@ void Simplex::load(string file){
     bool flag = false;
 
     getline(input, line);
-
+    //Pega o valor de m e de n separados por ,
     for(i = 0; i < line.size(); i++){
         if(line[i] != ','){
             buffer.push_back(line[i]);
@@ -55,14 +52,15 @@ void Simplex::load(string file){
     }
     n = stoi(buffer);
 
+    //Aloca memoria para a matriz A (mxn), e para os vetores b e c
     A.resize(m);
     b.resize(m);
     c.resize(n);
-
     for(i = 0; i < m; i++){
         A[i].resize(n);
     }
 
+    //Pega os valores da matriz A
     for(i = 0; getline(input, line) && i < m; i++){
         vals = split_line(line);
         for(j = 0; j < n; j++){
@@ -70,11 +68,13 @@ void Simplex::load(string file){
         }
     }
 
+    //Pega os valores do vetor b
     vals = split_line(line);
     for(j = 0; j < m; j++){
         b[j] = stodn(vals[j]);
     }
 
+    //Pega os valores do vetor c
     getline(input, line);
     vals = split_line(line);
     for(j = 0; j < vals.size(); j++){
@@ -83,34 +83,26 @@ void Simplex::load(string file){
 }
 
 void Simplex::reducedCosts(vector<double> lambda, vector<double> &r, int &iminr){
-    int i, j, k, l;
+    int i, j, nbsize = Nb.size();
     double dot, min = numeric_limits<double>::infinity();
 
-    for(i = 0, k = 0, l = 0; i < n; i++){
-        //Verifica se a variavel esa na base.
-        for(l = 0; l < Ib.size(); l++){
-            if(Ib[l] == i){
-                break;
-            }
+    for(i = 0; i < nbsize; i++){
+        //Produto interno de lambda*aj, onde aj sao as constantes das var. nao basicas.
+        for(j = 0, dot = 0.0; j < m; j++){
+            dot += lambda[j] * A[j][Nb[i]];
         }
-        //Caso nao esteja, o custo reduzido da variavel nao basica eh computado.
-        if(l == Ib.size()){
-            //Produto interno de lambda*aj, onde aj sao as constantes da var. nao basica.
-            for(j = 0, dot = 0.0; j < m; j++){
-                dot += lambda[j] * A[j][i];
-            }
-            r[k] = c[i] - dot;
-            //Verifica se eh menor que o menor custo reduzido ate o momento.
-            if(r[k] < min){
-                min = r[k];
-                iminr = i;
-            }
-            k++;
+        //Custo reduzido da var. nao basica i.
+        r[i] = c[Nb[i]] - dot;
+
+        //Verifica se eh menor que o menor custo reduzido ate o momento.
+        if(r[i] < min){
+            min = r[i];
+            iminr = Nb[i];
         }
     }
 
     //Se o menor custo reduzido eh positivo, entao ri > 0, para i = 1,...,m e a solucao eh otima.
-    if(min >= 0) iminr = -1;
+    if(min >= -EPS) iminr = -1;
 }
 
 vector<double> Simplex::solve(){
@@ -178,7 +170,9 @@ vector<double> Simplex::solve(){
             cout << "Problema não limitado" << endl;
             return x;
         }else{
+            //Adiciona q as var. basicas e ie as nao basicas.
             Ib[ie] = q;
+            Nb[q] = ie;
         }
         //Como nao atingimos a otimalidade, voltamos ao inicio do loop.
         itr++;

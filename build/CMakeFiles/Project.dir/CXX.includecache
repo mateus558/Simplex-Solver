@@ -71,6 +71,8 @@ limits
 -
 numeric
 -
+cmath
+-
 ../includes/lu_decomp.hpp
 /home/mateus558/Dropbox/Materiais/Computação/Simplex_solver/includes/lu_decomp.hpp
 ../includes/simplex.hpp

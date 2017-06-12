@@ -20,7 +20,7 @@ private:
     /// b eh o bias e c sao os custos da funcao objetivo.
     std::vector<double> b, c;
     /// Ib eh o vetor de indices das colunas que estao na base.
-    std::vector<uint> Ib;
+    std::vector<uint> Ib, Nb;
 
     /**
      * @brief reducedCosts Computa os custos reduzidos e verifica se a SBF eh otima.
